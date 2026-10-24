@@ -87,11 +87,36 @@ void GEBalljoint::ComputeMatrix()
     posem[2][3] = 0;
     posem[3][3] = 1;
 
+
     glm::mat4 matrix = jointm * posem;
 
-    joint->setLocation(matrix);
-    glm::mat4 mm = glm::translate(matrix, glm::vec3(0.0f, 0.0f, length / 2));
-    bone->setLocation(mm);
+	// Si existe una articulación padre hereda su transformación global
+    if (parent != nullptr)
+    {
+        // Nos desplazamos hasta el extremo del hueso del padre
+        glm::mat4 parentEnd = glm::translate(parent->globalMatrix,glm::vec3(0.0f, 0.0f, parent->length));
+
+        matrix = parentEnd * matrix;
+    }
+
+    //Guardiola transformación global
+    globalMatrix = matrix;
+
+    // Actualizo la posición de la esfera y del hueso
+    if (joint != nullptr && bone != nullptr)
+    {
+        joint->setLocation(globalMatrix);
+
+        glm::mat4 mm = glm::translate(globalMatrix,glm::vec3(0.0f, 0.0f, length / 2.0f));
+
+        bone->setLocation(mm);
+    }
+
+    // Actualizo las articulaciones hijas recursivamente
+    for (GEBalljoint* child : children)
+    {
+        child->ComputeMatrix();
+    }
 }
 
 //
@@ -206,4 +231,32 @@ void GEBalljoint::setLight(GELight l)
 {
     joint->setLight(l);
     bone->setLight(l);
+}
+
+//
+// FUNCIÓN: GEBalljoint::addChild()
+//
+// PROPÓSITO: Añade una articulación hija.
+//
+void GEBalljoint::addChild(GEBalljoint* child)
+{
+	//comprueba q no se añada a si mismo, que no sea nulo y que no tenga padre
+    if (child == nullptr || child == this ||
+        child->parent != nullptr)
+    {
+        return;
+    }
+
+	//comprueba que no se cree un ciclo en la jerarquía
+    for (GEBalljoint* p = this; p != nullptr; p = p->parent)
+    {
+        if (p == child)
+        {
+            return;
+        }
+    }
+
+	//asigna el padre y añade a la lista de hijos
+    child->parent = this;
+    children.push_back(child);
 }
