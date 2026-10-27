@@ -55,6 +55,7 @@ GEScene::GEScene(GEGraphicsContext* gc, GEDrawingContext* dc, GECommandContext* 
 	// Construimos las 19 articulaciones
 	testSkeleton->buildBody();
 
+
 	// Inicializamos las piezas graficas
 	testSkeleton->initialize(gc, rc);
 

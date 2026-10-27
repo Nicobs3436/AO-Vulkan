@@ -49,6 +49,7 @@ public:
 	GEBalljoint(float length);
 	void setName(const std::string& newName);
 	const std::string& getName() const;
+	GEBalljoint* findJoint(const std::string& jointName);
 	void initialize(GEGraphicsContext* gc, GERenderingContext* rc);//inicializa los recurso graficos de la articulación
 	void destroy(GEGraphicsContext* gc);//libera los recursos graficos de la articulación
 	void addCommands(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, int index);//añade ordenes de renderizado

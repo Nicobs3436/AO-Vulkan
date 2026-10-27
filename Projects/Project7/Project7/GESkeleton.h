@@ -35,6 +35,7 @@ public:
 
     
     void buildBody();// Construye el esqueleto humano de body.skel
+    GEBalljoint* getJoint(const std::string& jointName);
 
     void initialize(GEGraphicsContext* gc, GERenderingContext* rc);
     void destroy(GEGraphicsContext* gc);

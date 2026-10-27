@@ -526,25 +526,30 @@ void GESkeleton::buildBody()
 
     // La cadera derecha depende de la raiz
     addRootJoint(hipR);
-
-
-
-    //
-    // PRUEBA: Pose de ejemplo del profesor
-    //
-
-    // Brazo izquierdo
-    shoulderL->setPose(0.0f, -45.0f, 0.0f);
-    elbowL->setPose(-45.0f, 0.0f, 0.0f);
-
-    // Brazo derecho
-    shoulderR->setPose(-45.0f, -30.0f, -150.0f);
-    elbowR->setPose(-90.0f, 0.0f, 0.0f);
-
-    // Pierna izquierda
-    legL->setPose(-45.0f, 0.0f, 0.0f);
-    kneeL->setPose(30.0f, 0.0f, 0.0f);
-
-
 }
 
+
+
+
+//
+// FUNCION: GESkeleton::getJoint()
+//
+// PROPOSITO: 
+//            
+//
+ GEBalljoint* GESkeleton::getJoint(const std::string& jointName)
+    {
+        // Buscamos en las tres ramas principales del esqueleto
+        for (GEBalljoint* root : rootJoints)
+        {
+            GEBalljoint* found = root->findJoint(jointName);
+
+            if (found != nullptr)
+            {
+                return found;
+            }
+        }
+
+        // No existe una articulacion con ese nombre
+        return nullptr;
+    }

@@ -395,3 +395,34 @@ void GEBalljoint::setLimits(glm::vec3 minimum, glm::vec3 maximum)
     // Ajustamos la pose actual a los nuevos limites
     setPose(angles[0], angles[1], angles[2]);
 }
+
+
+
+
+//
+// FUNCION: GEBalljoint::findJoint()
+//
+// PROPOSITO: compara el nombre de la articulación actual. Si no coincide, busca recursivamente entre sus hijas.
+//
+GEBalljoint* GEBalljoint::findJoint(const std::string& jointName)
+{
+    // Comprobamos si la articulacion actual es la buscada
+    if (name == jointName)
+    {
+        return this;
+    }
+
+    // Buscamos entre las articulaciones hijas
+    for (GEBalljoint* child : children)
+    {
+        GEBalljoint* found = child->findJoint(jointName);
+
+        if (found != nullptr)
+        {
+            return found;
+        }
+    }
+
+    // No hemos encontrado la articulacion
+    return nullptr;
+}
