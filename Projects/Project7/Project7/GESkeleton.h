@@ -33,6 +33,9 @@ private:
 public:
     GESkeleton(const std::string& skeletonName);
 
+    
+    void buildBody();// Construye el esqueleto humano de body.skel
+
     void initialize(GEGraphicsContext* gc, GERenderingContext* rc);
     void destroy(GEGraphicsContext* gc);
     void addCommands(VkCommandBuffer commandBuffer,

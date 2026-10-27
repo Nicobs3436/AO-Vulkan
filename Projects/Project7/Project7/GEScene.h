@@ -27,9 +27,7 @@ private:
 	GEFigure* cross;
 	GEBalljoint* armL;
 	GEBalljoint* armR;
-	// Esqueleto temporal para comprobar la jerarquia
-	GESkeleton* testSkeleton = nullptr;
-	GEBalljoint* testRoot = nullptr;
+	GESkeleton* testSkeleton = nullptr;// Esqueleto temporal para comprobar la jerarquia
 	float angle;
 	GECamera* camera;
 	glm::mat4 projection;
