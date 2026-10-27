@@ -162,6 +162,7 @@
     <None Include="html1.htm" />
     <None Include="shaders\vert.spv" />
     <None Include="shaders\frag.spv" />
+    <None Include="body.skel" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\Icon\toy.ico">

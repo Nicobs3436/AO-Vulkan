@@ -8,6 +8,7 @@
 #include <glm\glm.hpp>
 #include <vector>
 #include "GEMaterial.h"
+#include <string>
 
 //
 // CLASE: GEBalljoint
@@ -17,6 +18,7 @@
 class GEBalljoint {
 private:
 	GLfloat length;//longitud del segmento
+	std::string name;
 	glm::vec3 location;//posicion de la articulación
 	glm::vec3 dir;//vectores para la orientación de la articulación
 	glm::vec3 up;//vectores para la orientación de la articulación
@@ -37,6 +39,8 @@ private:
 
 public:
 	GEBalljoint(float length);
+	void setName(const std::string& newName);
+	const std::string& getName() const;
 	void initialize(GEGraphicsContext* gc, GERenderingContext* rc);//inicializa los recurso graficos de la articulación
 	void destroy(GEGraphicsContext* gc);//libera los recursos graficos de la articulación
 	void addCommands(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, int index);//añade ordenes de renderizado

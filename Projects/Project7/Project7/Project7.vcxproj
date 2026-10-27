@@ -191,6 +191,7 @@
     <ResourceCompile Include="Project7.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="body.skel" />
     <None Include="html1.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>

@@ -354,3 +354,24 @@ void GEBalljoint::setMaterial(GEMaterial m)
         child->setMaterial(m);
     }
 }
+
+
+//
+// FUNCION: GEBalljoint::setName()
+//
+// PROPOSITO: Asigna el nombre de la articulacion.
+//
+void GEBalljoint::setName(const std::string& newName)
+{
+    name = newName;
+}
+
+//
+// FUNCION: GEBalljoint::getName()
+//
+// PROPOSITO: Devuelve el nombre de la articulacion.
+//
+const std::string& GEBalljoint::getName() const
+{
+    return name;
+}
