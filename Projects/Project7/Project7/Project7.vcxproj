@@ -154,6 +154,7 @@
     <ClCompile Include="GEPipelineConfig.cpp" />
     <ClCompile Include="GERenderingContext.cpp" />
     <ClCompile Include="GEScene.cpp" />
+    <ClCompile Include="GESkeleton.cpp" />
     <ClCompile Include="GESphere.cpp" />
     <ClCompile Include="GEUniformBuffer.cpp" />
     <ClCompile Include="GEVertexBuffer.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="GEPipelineConfig.h" />
     <ClInclude Include="GERenderingContext.h" />
     <ClInclude Include="GEScene.h" />
+    <ClInclude Include="GESkeleton.h" />
     <ClInclude Include="GESphere.h" />
     <ClInclude Include="GETransform.h" />
     <ClInclude Include="GEUniformBuffer.h" />

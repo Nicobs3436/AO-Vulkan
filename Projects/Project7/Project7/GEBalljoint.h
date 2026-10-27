@@ -7,6 +7,7 @@
 #include "GELight.h"
 #include <glm\glm.hpp>
 #include <vector>
+#include "GEMaterial.h"
 
 //
 // CLASE: GEBalljoint
@@ -30,6 +31,8 @@ private:
 
 	glm::mat4 globalMatrix = glm::mat4(1.0f);//matriz de transformación global de la articulación
 
+	glm::mat4 rootMatrix = glm::mat4(1.0f);// Transformacion recibida desde la raiz del esqueleto
+
 	void ComputeMatrix();//calcula la matriz de transformación de la articulación
 
 public:
@@ -40,9 +43,12 @@ public:
 	void update(GEGraphicsContext* gc, uint32_t index, glm::mat4 view, glm::mat4 projection);//actualiza los datos para dibujar
 
 	void setLight(GELight l);//establece la luz de la articulación
+	void setMaterial(GEMaterial m);
 	void setLocation(glm::vec3 loc);//establece la posición de la articulación
 	void setOrientation(glm::vec3 nDir, glm::vec3 nUp);//establece la orientación de la articulación
 	void setPose(float xrot, float yrot, float zrot);//establece los tres angulos de rotacion
 
 	void addChild(GEBalljoint* child);//añade una articulación hija
+
+	void setRootMatrix(glm::mat4 matrix); //permite q GESkeleton establezca la transformacion de una articulacion raiz
 };

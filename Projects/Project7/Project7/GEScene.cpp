@@ -12,6 +12,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+
 //
 // FUNCIÓN: GEScene::GEScene(GEGraphicsContext* gc, GEDrawingContext* dc)
 //
@@ -82,6 +83,43 @@ GEScene::GEScene(GEGraphicsContext* gc, GEDrawingContext* dc, GECommandContext* 
 
 	angle = 0.0;
 
+
+	//
+	// PRUEBA TEMPORAL DE GESkeleton
+	//
+
+	// Creamos el esqueleto
+	testSkeleton = new GESkeleton("prueba");
+
+	// Lo colocamos a la derecha de la estructura en T
+	testSkeleton->setOffset(glm::vec3(1.3f, 0.9f, 0.0f));
+
+	// Creamos la articulacion principal
+	testRoot = new GEBalljoint(0.45f);
+
+	// Orientamos el primer hueso hacia arriba
+	testRoot->setOrientation(
+		glm::vec3(0.0f, 1.0f, 0.0f),
+		glm::vec3(0.0f, 0.0f, -1.0f)
+	);
+
+	// Creamos una articulacion hija
+	GEBalljoint* testChild = new GEBalljoint(0.35f);
+
+	// Doblamos ligeramente la articulacion hija
+	testChild->setPose(0.0f, 35.0f, 0.0f);
+
+	// Construimos la jerarquia
+	testRoot->addChild(testChild);
+	testSkeleton->addRootJoint(testRoot);
+
+	// Inicializamos todas las piezas graficas
+	testSkeleton->initialize(gc, rc);
+
+	// Aplicamos la iluminacion
+	testSkeleton->setLight(light);
+
+
 	fillCommandBuffers(cc->commandBuffers);
 }
 
@@ -101,11 +139,14 @@ void GEScene::destroy(GEGraphicsContext* gc)
 	armL->destroy(gc);
 	armR->destroy(gc);
 
+	testSkeleton->destroy(gc);
+
 	delete ground;
 	delete column;
 	delete cross;
 	delete armL;
 	delete armR;
+	delete testSkeleton;
 }
 
 //
@@ -136,11 +177,16 @@ void GEScene::update(GEGraphicsContext* gc, uint32_t index)
 	armL->setPose(angle, 0.0f, 0.0f);
 	armR->setPose(0.0f, angle, 0.0f);
 
+	// Movemos la articulacion principal del esqueleto de prueba
+	testRoot->setPose(0.0f, angle, 0.0f);
+
 	ground->update(gc, index, view, projection);
 	column->update(gc, index, view, projection);
 	cross->update(gc, index, view, projection);
 	armL->update(gc, index, view, projection);
 	armR->update(gc, index, view, projection);
+
+	testSkeleton->update(gc, index, view, projection);
 }
 
 //
@@ -263,6 +309,12 @@ void GEScene::fillCommandBuffers(std::vector<VkCommandBuffer> commandBuffers)
 		cross->addCommands(commandBuffers[i], rc->pipelineLayout, i);
 		armL->addCommands(commandBuffers[i], rc->pipelineLayout, i);
 		armR->addCommands(commandBuffers[i], rc->pipelineLayout, i);
+
+		testSkeleton->addCommands(
+			commandBuffers[i],
+			rc->pipelineLayout,
+			i
+		);
 	}
 	rc->endFillingCommandBuffers(commandBuffers);
 }

@@ -88,16 +88,22 @@ void GEBalljoint::ComputeMatrix()
     posem[3][3] = 1;
 
 
+
     glm::mat4 matrix = jointm * posem;
 
-	// Si existe una articulación padre hereda su transformación global
     if (parent != nullptr)
     {
-        // Nos desplazamos hasta el extremo del hueso del padre
+        // Articulacion hija: hereda la transformacion del padre
         glm::mat4 parentEnd = glm::translate(parent->globalMatrix,glm::vec3(0.0f, 0.0f, parent->length));
 
         matrix = parentEnd * matrix;
     }
+    else
+    {
+        // Articulacion raiz hereda la transformacion del esqueleto
+        matrix = rootMatrix * matrix;
+    }
+
 
     //Guardiola transformación global
     globalMatrix = matrix;
@@ -144,9 +150,18 @@ void GEBalljoint::initialize(GEGraphicsContext* gc, GERenderingContext* rc)
 
     bone = new GECylinder(2, 10, 0.05f, length / 2);
     bone->initialize(gc, rc);
+
     bone->setMaterial(boneMat);
 
+    // Inicializamos primero las articulaciones hijas
+    for (GEBalljoint* child : children)
+    {
+        child->initialize(gc, rc);
+    }
+
+    // Calculamos las matrices de toda la jerarquia
     ComputeMatrix();
+
 }
 
 //
@@ -154,25 +169,50 @@ void GEBalljoint::initialize(GEGraphicsContext* gc, GERenderingContext* rc)
 //
 // PROPÓSITO: Actualiza las variables uniformes
 //
-void GEBalljoint::update(GEGraphicsContext* gc, uint32_t index, glm::mat4 view, glm::mat4 projection)
+
+void GEBalljoint::update(GEGraphicsContext* gc, uint32_t index,
+    glm::mat4 view, glm::mat4 projection)
 {
+    // Actualiza la esfera y el cilindro de esta articulacion
     joint->update(gc, index, view, projection);
     bone->update(gc, index, view, projection);
+
+    // Actualizo todas las articulaciones hijas
+    for (GEBalljoint* child : children)
+    {
+        child->update(gc, index, view, projection);
+    }
 }
+
 
 //
 // FUNCIÓN: GEBalljoint::destroy(CAVulkanState* vulkan)
 //
 // PROPÓSITO: Destruye los buffers de las piezas
 //
+
 void GEBalljoint::destroy(GEGraphicsContext* gc)
 {
+    // Destruye las articulaciones hijas
+    for (GEBalljoint* child : children)
+    {
+        child->destroy(gc);
+        delete child;
+    }
+
+    children.clear();
+
+    // Libera los recursos de esta articulacion
     joint->destroy(gc);
     bone->destroy(gc);
 
     delete joint;
     delete bone;
+
+    joint = nullptr;
+    bone = nullptr;
 }
+
 
 //
 // FUNCIÓN: GEBalljoint::setLocation(glm::vec3 loc)
@@ -216,10 +256,19 @@ void GEBalljoint::setPose(float xrot, float yrot, float zrot)
 //
 // PROPÓSITO: Añade los comandos de dibujo
 //
-void GEBalljoint::addCommands(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, int index)
+
+void GEBalljoint::addCommands(VkCommandBuffer commandBuffer,
+    VkPipelineLayout pipelineLayout, int index)
 {
+    // Dibuja la articulacion actual
     joint->addCommands(commandBuffer, pipelineLayout, index);
     bone->addCommands(commandBuffer, pipelineLayout, index);
+
+    // Añade los comandos de dibujo de las articulaciones hijas
+    for (GEBalljoint* child : children)
+    {
+        child->addCommands(commandBuffer, pipelineLayout, index);
+    }
 }
 
 //
@@ -227,11 +276,19 @@ void GEBalljoint::addCommands(VkCommandBuffer commandBuffer, VkPipelineLayout pi
 //
 // PROPÓSITO: Asigna las propiedades de la luz
 //
+
 void GEBalljoint::setLight(GELight l)
 {
     joint->setLight(l);
     bone->setLight(l);
+
+    // Aplicamos la luz a las articulaciones hijas
+    for (GEBalljoint* child : children)
+    {
+        child->setLight(l);
+    }
 }
+
 
 //
 // FUNCIÓN: GEBalljoint::addChild()
@@ -259,4 +316,41 @@ void GEBalljoint::addChild(GEBalljoint* child)
 	//asigna el padre y añade a la lista de hijos
     child->parent = this;
     children.push_back(child);
+}
+
+
+
+//
+// FUNCIÓN: GEBalljoint::setRootMatrix()
+//
+// PROPÓSITO: Asigna la transformacion de la raiz del esqueleto.
+//
+void GEBalljoint::setRootMatrix(glm::mat4 matrix)
+{
+    if (parent == nullptr)
+    {
+        rootMatrix = matrix;
+        ComputeMatrix();
+    }
+}
+
+
+
+//
+// FUNCION: GEBalljoint::setMaterial()
+//
+// PROPOSITO: Asigna un material a las piezas de la
+//            articulacion y a sus articulaciones hijas.
+//
+void GEBalljoint::setMaterial(GEMaterial m)
+{
+    // Asigna el material a la esfera y al cilindro
+    joint->setMaterial(m);
+    bone->setMaterial(m);
+
+    // Aplica el material a las articulaciones hijas
+    for (GEBalljoint* child : children)
+    {
+        child->setMaterial(m);
+    }
 }
