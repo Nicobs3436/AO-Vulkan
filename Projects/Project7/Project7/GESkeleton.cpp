@@ -527,5 +527,24 @@ void GESkeleton::buildBody()
     // La cadera derecha depende de la raiz
     addRootJoint(hipR);
 
+
+
+    //
+    // PRUEBA: Pose de ejemplo del profesor
+    //
+
+    // Brazo izquierdo
+    shoulderL->setPose(0.0f, -45.0f, 0.0f);
+    elbowL->setPose(-45.0f, 0.0f, 0.0f);
+
+    // Brazo derecho
+    shoulderR->setPose(-45.0f, -30.0f, -150.0f);
+    elbowR->setPose(-90.0f, 0.0f, 0.0f);
+
+    // Pierna izquierda
+    legL->setPose(-45.0f, 0.0f, 0.0f);
+    kneeL->setPose(30.0f, 0.0f, 0.0f);
+
+
 }
 

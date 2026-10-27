@@ -24,6 +24,14 @@ private:
 	glm::vec3 up;//vectores para la orientación de la articulación
 	glm::vec3 right;//vectores para la orientación de la articulación
 	GLfloat angles[3];//ángulos de rotación de la articulación
+
+	// Limites de los tres angulos de Euler (en grados)
+	glm::vec3 minAngles = glm::vec3(0.0f);
+	glm::vec3 maxAngles = glm::vec3(0.0f);
+
+	// Por defecto, la articulacion no tiene limites
+	bool limitsEnabled = false;
+
 	GESphere* joint;//esfera que representa la articulación
 	GECylinder* bone;//cilindro que representa el segmento
 
@@ -51,6 +59,7 @@ public:
 	void setLocation(glm::vec3 loc);//establece la posición de la articulación
 	void setOrientation(glm::vec3 nDir, glm::vec3 nUp);//establece la orientación de la articulación
 	void setPose(float xrot, float yrot, float zrot);//establece los tres angulos de rotacion
+	void setLimits(glm::vec3 minimum, glm::vec3 maximum);
 
 	void addChild(GEBalljoint* child);//añade una articulación hija
 

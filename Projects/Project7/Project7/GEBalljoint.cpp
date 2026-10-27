@@ -245,9 +245,18 @@ void GEBalljoint::setOrientation(glm::vec3 nDir, glm::vec3 nUp)
 //
 void GEBalljoint::setPose(float xrot, float yrot, float zrot)
 {
-    angles[0] = xrot;
-    angles[1] = yrot;
-    angles[2] = zrot;
+    glm::vec3 pose(xrot, yrot, zrot);
+
+    // Solo restringimos los angulos si hay limites definidos
+    if (limitsEnabled)
+    {
+        pose = glm::clamp(pose, minAngles, maxAngles);
+    }
+
+    angles[0] = pose.x;
+    angles[1] = pose.y;
+    angles[2] = pose.z;
+
     ComputeMatrix();
 }
 
@@ -374,4 +383,15 @@ void GEBalljoint::setName(const std::string& newName)
 const std::string& GEBalljoint::getName() const
 {
     return name;
+}
+
+
+void GEBalljoint::setLimits(glm::vec3 minimum, glm::vec3 maximum)
+{
+    minAngles = minimum;
+    maxAngles = maximum;
+    limitsEnabled = true;
+
+    // Ajustamos la pose actual a los nuevos limites
+    setPose(angles[0], angles[1], angles[2]);
 }
