@@ -12,7 +12,7 @@
 #include <glm/glm.hpp>
 
 #include "GESkeleton.h"
-
+#include "GEAnimation.h"
 //
 // CLASE: GEScene
 //
@@ -28,6 +28,10 @@ private:
 	GEBalljoint* armL;
 	GEBalljoint* armR;
 	GESkeleton* testSkeleton = nullptr;// Esqueleto temporal para comprobar la jerarquia
+	GEAnimation* animation = nullptr;
+
+	// Instante en el que comienza la animacion
+	double animationStartTime = 0.0;
 	float angle;
 	GECamera* camera;
 	glm::mat4 projection;

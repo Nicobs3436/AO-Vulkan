@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GEAnimation.cpp" />
     <ClCompile Include="GEApplication.cpp" />
     <ClCompile Include="GEBalljoint.cpp" />
     <ClCompile Include="GECamera.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GEAnimation.h" />
     <ClInclude Include="GEApplication.h" />
     <ClInclude Include="GEBalljoint.h" />
     <ClInclude Include="GECamera.h" />

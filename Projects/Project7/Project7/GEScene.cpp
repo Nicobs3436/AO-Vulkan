@@ -11,6 +11,7 @@
 #include "resource.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <GLFW/glfw3.h>
 
 
 //
@@ -62,6 +63,39 @@ GEScene::GEScene(GEGraphicsContext* gc, GEDrawingContext* dc, GECommandContext* 
 	// Aplicamos la iluminacion
 	testSkeleton->setLight(light);
 
+
+
+	//
+	// PRUEBA TEMPORAL DE INTERPOLACION LINEAL
+	//
+
+	animation = new GEAnimation(testSkeleton);
+
+	// Instante inicial: brazo en reposo
+	animation->addKeyframe(
+		"shoulder_l",
+		0.0f,
+		glm::vec3(0.0f, 0.0f, 0.0f)
+	);
+
+	// A los 1.5 segundos: giramos el hombro
+	animation->addKeyframe(
+		"shoulder_l",
+		1.5f,
+		glm::vec3(0.0f, -60.0f, 0.0f)
+	);
+
+	// A los 3 segundos: volvemos a la posicion inicial
+	animation->addKeyframe(
+		"shoulder_l",
+		3.0f,
+		glm::vec3(0.0f, 0.0f, 0.0f)
+	);
+
+	// Guardamos el instante de inicio
+	animationStartTime = glfwGetTime();
+
+
 	fillCommandBuffers(cc->commandBuffers);
 }
 
@@ -76,6 +110,7 @@ void GEScene::destroy(GEGraphicsContext* gc)
 	delete rc;
 
 	ground->destroy(gc);
+	delete animation;
 	testSkeleton->destroy(gc);
 
 	delete ground;
@@ -100,16 +135,32 @@ void GEScene::recreate(GEGraphicsContext* gc, GEDrawingContext* dc, GECommandCon
 //
 // PROPÓSITO: Actualiza la información para generar la imagen 
 //
+
 void GEScene::update(GEGraphicsContext* gc, uint32_t index)
 {
 	camera->update();
 
 	glm::mat4 view = camera->getViewMatrix();
 
-	ground->update(gc, index, view, projection);
+	// Tiempo transcurrido desde el inicio de la animacion
+	double now = glfwGetTime();
+	double elapsed = now - animationStartTime;
 
+	// Repetimos la prueba cada 3 segundos
+	if (elapsed >= 3.0)
+	{
+		animationStartTime = now;
+		elapsed = 0.0;
+	}
+
+	// Calculamos y aplicamos los angulos interpolados
+	animation->update(static_cast<float>(elapsed));
+
+	// Actualizamos los objetos graficos
+	ground->update(gc, index, view, projection);
 	testSkeleton->update(gc, index, view, projection);
 }
+
 
 //
 // FUNCIÓN: GEScene::key_action(int key, bool pressed)
