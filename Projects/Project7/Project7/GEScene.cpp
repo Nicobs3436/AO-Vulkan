@@ -64,33 +64,69 @@ GEScene::GEScene(GEGraphicsContext* gc, GEDrawingContext* dc, GECommandContext* 
 	testSkeleton->setLight(light);
 
 
-
-	//
-	// PRUEBA TEMPORAL DE INTERPOLACION LINEAL
-	//
-
 	animation = new GEAnimation(testSkeleton);
 
-	// Instante inicial: brazo en reposo
+
+
+	//
+	// LANZAMIENTO DE PESO: PRUEBA DE PREPARACION
+	//
+
+	// HOMBRO DERECHO
+
+	// Inicio: brazo recogido
 	animation->addKeyframe(
-		"shoulder_l",
-		0.0f,
+		"shoulder_r", 0.0f,
+		glm::vec3(-45.0f, -30.0f, -175.0f)
+	);
+
+	// Mantiene la carga hasta la posicion de fuerza
+	animation->addKeyframe(
+		"shoulder_r", 3.2f,
+		glm::vec3(-45.0f, -30.0f, -175.0f)
+	);
+
+	// Extension durante el lanzamiento
+	animation->addKeyframe(
+		"shoulder_r", 3.8f,
+		glm::vec3(-10.0f, -10.0f, -60.0f)
+	);
+
+	// Recuperacion
+	animation->addKeyframe(
+		"shoulder_r", 5.0f,
+		glm::vec3(-15.0f, -10.0f, -30.0f)
+	);
+
+
+	// CODO DERECHO
+
+	// Inicio: codo flexionado
+	animation->addKeyframe(
+		"elbow_r", 0.0f,
+		glm::vec3(-160.0f, 0.0f, 0.0f)
+	);
+
+	// Conservamos la flexion durante la preparacion
+	animation->addKeyframe(
+		"elbow_r", 3.2f,
+		glm::vec3(-160.0f, 0.0f, 0.0f)
+	);
+
+	// Empuje y extension
+	animation->addKeyframe(
+		"elbow_r", 3.8f,
 		glm::vec3(0.0f, 0.0f, 0.0f)
 	);
 
-	// A los 1.5 segundos: giramos el hombro
+	// Recuperacion
 	animation->addKeyframe(
-		"shoulder_l",
-		1.5f,
-		glm::vec3(0.0f, -60.0f, 0.0f)
+		"elbow_r", 5.0f,
+		glm::vec3(-15.0f, 0.0f, 0.0f)
 	);
 
-	// A los 3 segundos: volvemos a la posicion inicial
-	animation->addKeyframe(
-		"shoulder_l",
-		3.0f,
-		glm::vec3(0.0f, 0.0f, 0.0f)
-	);
+
+
 
 	// Guardamos el instante de inicio
 	animationStartTime = glfwGetTime();
@@ -146,15 +182,15 @@ void GEScene::update(GEGraphicsContext* gc, uint32_t index)
 	double now = glfwGetTime();
 	double elapsed = now - animationStartTime;
 
-	// Repetimos la prueba cada 3 segundos
-	if (elapsed >= 3.0)
+	// Repetimos la prueba cada 5 segundos
+	if (elapsed >= 5.0)
 	{
-		animationStartTime = now;
-		elapsed = 0.0;
+		//animationStartTime = now;
+		elapsed = 5.0;
 	}
 
 	// Calculamos y aplicamos los angulos interpolados
-	animation->update(static_cast<float>(elapsed));
+	animation->update(static_cast<float>(0.0f));
 
 	// Actualizamos los objetos graficos
 	ground->update(gc, index, view, projection);
