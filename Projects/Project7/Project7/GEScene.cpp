@@ -66,71 +66,118 @@ GEScene::GEScene(GEGraphicsContext* gc, GEDrawingContext* dc, GECommandContext* 
 
 	animation = new GEAnimation(testSkeleton);
 
+	// Altura para que los pies apoyen en el suelo
+	testSkeleton->setOffset(glm::vec3(0.0f, 1.038f, 0.0f));
+
+	animation = new GEAnimation(testSkeleton);
+
+	// Tronco ligeramente inclinado y cabeza erguida
+	animation->addKeyframe("spine", 0.0f, glm::vec3(-5.0f, 0.0f, 0.0f));
+	animation->addKeyframe("neck", 0.0f, glm::vec3(5.0f, 0.0f, 0.0f));
+
+	// Brazo derecho: mano junto al cuello
+	animation->addKeyframe("shoulder_r", 0.0f, glm::vec3(-15.0f, 15.0f, -10.0f));
+	animation->addKeyframe("elbow_r", 0.0f, glm::vec3(-160.0f, 0.0f, 0.0f));
+	animation->addKeyframe("wrist_r", 0.0f, glm::vec3(35.0f, 15.0f, -10.0f));
+
+	// Brazo izquierdo junto al cuerpo
+	animation->addKeyframe("shoulder_l", 0.0f, glm::vec3(80.0f, -10.0f, 0.0f));
+	animation->addKeyframe("elbow_l", 0.0f, glm::vec3(5.0f, 0.0f, 0.0f));
+
+	// Pierna derecha
+	animation->addKeyframe("leg_r", 0.0f, glm::vec3(-5.0f, 8.0f, 0.0f));
+	animation->addKeyframe("knee_r", 0.0f, glm::vec3(10.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 0.0f, glm::vec3(-5.0f, 0.0f, -8.0f));
+
+	// Pierna izquierda
+	animation->addKeyframe("leg_l", 0.0f, glm::vec3(-5.0f, -8.0f, 0.0f));
+	animation->addKeyframe("knee_l", 0.0f, glm::vec3(10.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_l", 0.0f, glm::vec3(-5.0f, 0.0f, 8.0f));
 
 
-	//
-	// LANZAMIENTO DE PESO: PRUEBA DE PREPARACION
-	//
+	// La pelvis comienza sin inclinacion
+	animation->addKeyframe("pelvis", 0.0f, glm::vec3(0.0f, 0.0f, 0.0f));
 
-	// HOMBRO DERECHO
+	// Agrupamiento: 1.2 segundos
+	animation->addKeyframe("pelvis", 1.2f, glm::vec3(-35.0f, 0.0f, 0.0f));
+	animation->addKeyframe("spine", 1.2f, glm::vec3(-30.0f, 0.0f, 0.0f));
 
-	// Inicio: brazo recogido
-	animation->addKeyframe(
-		"shoulder_r", 0.0f,
-		glm::vec3(-45.0f, -30.0f, -175.0f)
-	);
+	// Brazo izquierdo: queda colgando al inclinar el tronco
+	animation->addKeyframe("shoulder_l", 1.2f, glm::vec3(70.0f, -35.0f, -60.0f));
 
-	// Mantiene la carga hasta la posicion de fuerza
-	animation->addKeyframe(
-		"shoulder_r", 3.2f,
-		glm::vec3(-45.0f, -30.0f, -175.0f)
-	);
+	// Pierna derecha: apoyo durante el agrupamiento
+	animation->addKeyframe("leg_r", 1.2f, glm::vec3(-50.0f, 22.0f, 0.0f));
+	animation->addKeyframe("knee_r", 1.2f, glm::vec3(100.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 1.2f, glm::vec3(-48.0f, -17.0f, -15.0f));
 
-	// Extension durante el lanzamiento
-	animation->addKeyframe(
-		"shoulder_r", 3.8f,
-		glm::vec3(-10.0f, -10.0f, -60.0f)
-	);
+	// Pierna izquierda: se recoge junto a la derecha
+	animation->addKeyframe("leg_l", 1.2f, glm::vec3(-65.0f, -25.0f, 0.0f));
+	animation->addKeyframe("knee_l", 1.2f, glm::vec3(110.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_l", 1.2f, glm::vec3(-17.0f, 17.0f, 18.0f));
 
-	// Recuperacion
-	animation->addKeyframe(
-		"shoulder_r", 5.0f,
-		glm::vec3(-15.0f, -10.0f, -30.0f)
-	);
+	// Inicio del impulso: pierna derecha de apoyo
+	animation->addKeyframe("leg_r", 1.6f, glm::vec3(-65.0f, 22.0f, 0.0f));
+	animation->addKeyframe("knee_r", 1.6f, glm::vec3(80.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 1.6f, glm::vec3(-14.0f, -6.0f, -21.0f));
 
+	// La pierna izquierda se dirige hacia el lanzamiento
+	animation->addKeyframe("leg_l", 1.6f, glm::vec3(65.0f, -10.0f, 0.0f));
 
-	// CODO DERECHO
+	// Primero conserva la flexion y despues extiende la rodilla
+	animation->addKeyframe("knee_l", 1.4f, glm::vec3(115.0f, 0.0f, 0.0f));
+	animation->addKeyframe("knee_l", 1.6f, glm::vec3(10.0f, 0.0f, 0.0f));
 
-	// Inicio: codo flexionado
-	animation->addKeyframe(
-		"elbow_r", 0.0f,
-		glm::vec3(-160.0f, 0.0f, 0.0f)
-	);
-
-	// Conservamos la flexion durante la preparacion
-	animation->addKeyframe(
-		"elbow_r", 3.2f,
-		glm::vec3(-160.0f, 0.0f, 0.0f)
-	);
-
-	// Empuje y extension
-	animation->addKeyframe(
-		"elbow_r", 3.8f,
-		glm::vec3(0.0f, 0.0f, 0.0f)
-	);
-
-	// Recuperacion
-	animation->addKeyframe(
-		"elbow_r", 5.0f,
-		glm::vec3(-15.0f, 0.0f, 0.0f)
-	);
+	// Orientacion del pie libre durante el movimiento
+	animation->addKeyframe("ankle_l", 1.4f, glm::vec3(-76.0f, 16.0f, -8.0f));
+	animation->addKeyframe("ankle_l", 1.6f, glm::vec3(-35.0f, 10.0f, 3.0f));
 
 
+	// 1.72 s: termina el impulso del pie derecho
+	animation->addKeyframe("pelvis", 1.72f, glm::vec3(-35.0f, 0.0f, 0.0f));
+	animation->addKeyframe("spine", 1.72f, glm::vec3(-30.0f, 0.0f, 0.0f));
+	animation->addKeyframe("shoulder_l", 1.72f, glm::vec3(70.0f, -35.0f, -60.0f));
 
+	animation->addKeyframe("leg_r", 1.72f, glm::vec3(-50.0f, 20.0f, 0.0f));
+	animation->addKeyframe("knee_r", 1.72f, glm::vec3(35.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 1.72f, glm::vec3(39.0f, 5.0f, -19.0f));
 
-	// Guardamos el instante de inicio
+	animation->addKeyframe("knee_l", 1.72f, glm::vec3(80.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_l", 1.72f, glm::vec3(-56.0f, 2.0f, 0.0f));
+
+	// Recogemos los pies durante el avance
+	animation->addKeyframe("ankle_r", 1.76f, glm::vec3(11.0f, 0.0f, -19.0f));
+	animation->addKeyframe("ankle_l", 1.80f, glm::vec3(-53.0f, -2.0f, -2.0f));
+
+	// 1.88 s: avance con las piernas recogidas
+	animation->addKeyframe("leg_r", 1.88f, glm::vec3(-45.0f, 15.0f, 0.0f));
+	animation->addKeyframe("knee_r", 1.88f, glm::vec3(85.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 1.88f, glm::vec3(-24.0f, -10.0f, -12.0f));
+
+	animation->addKeyframe("leg_l", 1.88f, glm::vec3(-50.0f, 8.0f, -80.0f));
+	animation->addKeyframe("knee_l", 1.88f, glm::vec3(70.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_l", 1.88f, glm::vec3(-10.0f, -3.0f, -8.0f));
+
+	// 2.05 s: llega primero el pie derecho
+	animation->addKeyframe("pelvis", 2.05f, glm::vec3(-25.0f, 0.0f, -90.0f));
+	animation->addKeyframe("spine", 2.05f, glm::vec3(-25.0f, 0.0f, 0.0f));
+	animation->addKeyframe("shoulder_l", 2.05f, glm::vec3(70.0f, -25.0f, 40.0f));
+
+	animation->addKeyframe("leg_r", 2.05f, glm::vec3(-40.0f, 8.0f, 0.0f));
+	animation->addKeyframe("knee_r", 2.05f, glm::vec3(80.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 2.05f, glm::vec3(-40.0f, -5.0f, -6.0f));
+
+	animation->addKeyframe("leg_l", 2.05f, glm::vec3(-50.0f, 8.0f, -90.0f));
+	animation->addKeyframe("knee_l", 2.05f, glm::vec3(20.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_l", 2.05f, glm::vec3(30.0f, 4.0f, -7.0f));
+
+	// 2.20 s: termina de colocarse el pie izquierdo
+	animation->addKeyframe("pelvis", 2.20f, glm::vec3(-20.0f, 0.0f, -90.0f));
+	animation->addKeyframe("leg_l", 2.20f, glm::vec3(-45.0f, 8.0f, -90.0f));
+	animation->addKeyframe("knee_l", 2.20f, glm::vec3(12.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_l", 2.20f, glm::vec3(33.0f, 4.0f, -7.0f));
+
+	animation->update(0.0f);
 	animationStartTime = glfwGetTime();
-
 
 	fillCommandBuffers(cc->commandBuffers);
 }
@@ -178,19 +225,108 @@ void GEScene::update(GEGraphicsContext* gc, uint32_t index)
 
 	glm::mat4 view = camera->getViewMatrix();
 
-	// Tiempo transcurrido desde el inicio de la animacion
-	double now = glfwGetTime();
-	double elapsed = now - animationStartTime;
+	float time = static_cast<float>(glfwGetTime() - animationStartTime);
+	time = glm::clamp(time, 0.0f, 2.2f);
 
-	// Repetimos la prueba cada 5 segundos
-	if (elapsed >= 5.0)
+	animation->update(time);
+
+	// Preparacion: 0.0 a 1.2 segundos
+	float t = glm::clamp(time / 1.2f, 0.0f, 1.0f);
+
+	float muslo = glm::radians(-5.0f - 45.0f * t);
+	float rodilla = glm::radians(10.0f + 90.0f * t);
+	float lateral = glm::radians(8.0f + 14.0f * t);
+
+	// Extension de la pierna izquierda: 1.2 a 1.6 segundos
+	if (time > 1.2f)
 	{
-		//animationStartTime = now;
-		elapsed = 5.0;
+		float avance = glm::clamp(
+			(time - 1.2f) / 0.4f, 0.0f, 1.0f
+		);
+
+		muslo = glm::radians(-50.0f - 15.0f * avance);
+		rodilla = glm::radians(100.0f - 20.0f * avance);
+		lateral = glm::radians(22.0f);
 	}
 
-	// Calculamos y aplicamos los angulos interpolados
-	animation->update(static_cast<float>(0.0f));
+	float apoyoY = 0.1002f;
+	float apoyoZ = 0.0087f;
+
+	// Impulso: el talon derecho se levanta sobre la parte delantera del pie
+	if (time > 1.6f)
+	{
+		float avance = glm::clamp(
+			(time - 1.6f) / 0.12f, 0.0f, 1.0f
+		);
+
+		muslo = glm::radians(-65.0f + 15.0f * avance);
+		rodilla = glm::radians(80.0f - 45.0f * avance);
+		lateral = glm::radians(22.0f - 2.0f * avance);
+
+		float pie = glm::radians(25.0f * avance);
+
+		apoyoY = 0.05f * (float)cos(pie)
+			+ 0.25f * (float)sin(pie);
+
+		if (apoyoY < 0.1002f)
+		{
+			apoyoY = 0.1002f;
+		}
+
+		apoyoZ = 0.2587f - 0.25f * (float)cos(pie);
+	}
+
+	float alturaPierna =
+		0.5f * (float)cos(muslo) +
+		0.4f * (float)cos(muslo + rodilla);
+
+	glm::vec3 posicion(
+		0.1248f - alturaPierna * (float)sin(lateral),
+		apoyoY + 0.05f + alturaPierna * (float)cos(lateral),
+		apoyoZ + 0.5f * (float)sin(muslo)
+		+ 0.4f * (float)sin(muslo + rodilla)
+	);
+
+	float giro = 0.0f;
+
+	// Tras el impulso desplazamos el cuerpo hacia el lanzamiento
+	if (time > 1.72f)
+	{
+		float avanceGiro = glm::clamp(
+			(time - 1.72f) / 0.33f, 0.0f, 1.0f
+		);
+
+		giro = glm::radians(90.0f * avanceGiro);
+
+		glm::vec3 salida(-0.1173f, 0.8661f, -0.4544f);
+		glm::vec3 intermedia(-0.0600f, 0.9100f, -0.7000f);
+		glm::vec3 llegada(0.0000f, 0.8330f, -0.9540f);
+
+		if (time <= 1.88f)
+		{
+			float avance = (time - 1.72f) / 0.16f;
+			posicion = (1.0f - avance) * salida
+				+ avance * intermedia;
+		}
+		else
+		{
+			float avance = glm::clamp(
+				(time - 1.88f) / 0.17f, 0.0f, 1.0f
+			);
+
+			posicion = (1.0f - avance) * intermedia
+				+ avance * llegada;
+		}
+	}
+
+	testSkeleton->setOffset(posicion);
+
+	testSkeleton->setOrientation(
+		glm::vec3((float)sin(giro), 0.0f, (float)cos(giro)),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
+
+	
 
 	// Actualizamos los objetos graficos
 	ground->update(gc, index, view, projection);
@@ -207,6 +343,26 @@ void GEScene::key_action(int key, bool pressed)
 {
 	switch (key)
 	{
+	case GLFW_KEY_R:
+		if (pressed)
+		{
+			animationStartTime = glfwGetTime();
+		}
+		break;
+	case GLFW_KEY_F1:
+		if (pressed)
+		{
+			testSkeleton->resetLocation();
+		}
+		break;
+
+	case GLFW_KEY_F2:
+		if (pressed)
+		{
+			testSkeleton->resetLocation();
+			testSkeleton->rotate(90.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+		}
+		break;
 	case GLFW_KEY_UP:
 		camera->setTurnDown(pressed);
 		break;
