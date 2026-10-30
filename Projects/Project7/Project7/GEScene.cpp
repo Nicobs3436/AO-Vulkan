@@ -12,7 +12,25 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
+#include <string>
 
+void addLegPose(
+	GEAnimation* animation, const std::string& side, float time,
+	float lx, float ly, float lz, float knee,
+	float ax, float ay, float az)
+{
+	animation->addKeyframe(
+		"leg_" + side, time, glm::vec3(lx, ly, lz)
+	);
+
+	animation->addKeyframe(
+		"knee_" + side, time, glm::vec3(knee, 0.0f, 0.0f)
+	);
+
+	animation->addKeyframe(
+		"ankle_" + side, time, glm::vec3(ax, ay, az)
+	);
+}
 
 //
 // FUNCIÓN: GEScene::GEScene(GEGraphicsContext* gc, GEDrawingContext* dc)
@@ -176,6 +194,141 @@ GEScene::GEScene(GEGraphicsContext* gc, GEDrawingContext* dc, GECommandContext* 
 	animation->addKeyframe("knee_l", 2.20f, glm::vec3(12.0f, 0.0f, 0.0f));
 	animation->addKeyframe("ankle_l", 2.20f, glm::vec3(33.0f, 4.0f, -7.0f));
 
+	// Conservamos la llegada antes de iniciar el lanzamiento
+	animation->addKeyframe("leg_r", 2.2f, glm::vec3(-40.0f, 8.0f, 0.0f));
+	animation->addKeyframe("knee_r", 2.2f, glm::vec3(80.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 2.2f, glm::vec3(-40.0f, -5.0f, -6.0f));
+	animation->addKeyframe("spine", 2.2f, glm::vec3(-25.0f, 0.0f, 0.0f));
+	animation->addKeyframe("shoulder_l", 2.2f, glm::vec3(70.0f, -25.0f, 40.0f));
+	animation->addKeyframe("neck", 2.2f, glm::vec3(5.0f, 0.0f, 0.0f));
+
+	// Pierna derecha: giro y extension progresiva
+	animation->addKeyframe("leg_r", 2.325f, glm::vec3(-34.5f, 5.0f, 7.5f));
+	animation->addKeyframe("knee_r", 2.325f, glm::vec3(80.0f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 2.325f, glm::vec3(-44.0f, -3.5f, -3.5f));
+
+	animation->addKeyframe("leg_r", 2.45f, glm::vec3(-28.3f, 1.9f, 15.0f));
+	animation->addKeyframe("knee_r", 2.45f, glm::vec3(78.2f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 2.45f, glm::vec3(-44.2f, -1.5f, -1.2f));
+
+	animation->addKeyframe("leg_r", 2.7f, glm::vec3(-16.4f, -7.2f, 30.0f));
+	animation->addKeyframe("knee_r", 2.7f, glm::vec3(74.5f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 2.7f, glm::vec3(-43.5f, 6.1f, 3.8f));
+
+	animation->addKeyframe("leg_r", 2.95f, glm::vec3(-3.5f, -19.2f, 45.0f));
+	animation->addKeyframe("knee_r", 2.95f, glm::vec3(63.6f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 2.95f, glm::vec3(-35.5f, 16.5f, 9.8f));
+
+	animation->addKeyframe("leg_r", 3.075f, glm::vec3(3.5f, -25.9f, 52.5f));
+	animation->addKeyframe("knee_r", 3.075f, glm::vec3(53.3f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 3.075f, glm::vec3(-26.4f, 21.4f, 14.9f));
+
+	animation->addKeyframe("leg_r", 3.2f, glm::vec3(13.2f, -32.1f, 60.0f));
+	animation->addKeyframe("knee_r", 3.2f, glm::vec3(36.1f, 0.0f, 0.0f));
+	animation->addKeyframe("ankle_r", 3.2f, glm::vec3(-9.6f, 23.7f, 22.2f));
+
+	// Pierna izquierda: mantiene el apoyo y la rodilla firme
+	animation->addKeyframe("leg_l", 3.2f, glm::vec3(-41.3f, -8.3f, 0.0f));
+	animation->addKeyframe("ankle_l", 3.2f, glm::vec3(29.0f, -4.0f, 7.2f));
+
+	// Primero avanza la cadera; el tronco permanece retrasado
+	animation->addKeyframe("pelvis", 2.7f, glm::vec3(-12.0f, 0.0f, -70.0f));
+	animation->addKeyframe("spine", 2.7f, glm::vec3(-18.0f, 0.0f, 0.0f));
+	animation->addKeyframe("shoulder_l", 2.7f, glm::vec3(5.0f, -10.0f, 80.0f));
+	animation->addKeyframe("elbow_l", 2.7f, glm::vec3(5.0f, 0.0f, 0.0f));
+	animation->addKeyframe("wrist_l", 2.7f, glm::vec3(0.0f, 0.0f, 0.0f));
+
+	// El tronco comienza a alcanzar el giro de la cadera
+	animation->addKeyframe("pelvis", 3.05f, glm::vec3(-2.0f, 0.0f, -30.0f));
+	animation->addKeyframe("spine", 3.05f, glm::vec3(-5.0f, 0.0f, 0.0f));
+
+	// Cuerpo orientado hacia el lanzamiento
+	animation->addKeyframe("pelvis", 3.2f, glm::vec3(5.0f, 0.0f, 0.0f));
+	animation->addKeyframe("spine", 3.2f, glm::vec3(0.0f, 0.0f, 0.0f));
+	animation->addKeyframe("neck", 3.2f, glm::vec3(0.0f, 0.0f, 0.0f));
+
+	// Recogemos el brazo izquierdo
+	animation->addKeyframe("shoulder_l", 3.2f, glm::vec3(80.0f, -10.0f, 0.0f));
+	animation->addKeyframe("elbow_l", 3.2f, glm::vec3(140.0f, 0.0f, 0.0f));
+	animation->addKeyframe("wrist_l", 3.2f, glm::vec3(-20.0f, 0.0f, 0.0f));
+
+	// Conservamos el agarre hasta terminar el giro
+	animation->addKeyframe("shoulder_r", 3.2f, glm::vec3(-15.0f, 15.0f, -10.0f));
+	animation->addKeyframe("elbow_r", 3.2f, glm::vec3(-160.0f, 0.0f, 0.0f));
+	animation->addKeyframe("wrist_r", 3.2f, glm::vec3(35.0f, 15.0f, -10.0f));
+
+	// Empuje del brazo derecho
+	animation->addKeyframe("shoulder_r", 3.4f, glm::vec3(-45.0f, 10.0f, -45.0f));
+	animation->addKeyframe("elbow_r", 3.4f, glm::vec3(-100.0f, 0.0f, 0.0f));
+	animation->addKeyframe("wrist_r", 3.4f, glm::vec3(20.0f, 8.0f, -5.0f));
+
+	// Final del empuje: brazo extendido hacia delante y arriba
+	animation->addKeyframe("pelvis", 3.6f, glm::vec3(-5.0f, 0.0f, 0.0f));
+	animation->addKeyframe("spine", 3.6f, glm::vec3(-5.0f, 0.0f, 0.0f));
+	animation->addKeyframe("shoulder_r", 3.6f, glm::vec3(-80.0f, 70.0f, -30.0f));
+	animation->addKeyframe("elbow_r", 3.6f, glm::vec3(-5.0f, 0.0f, 0.0f));
+	animation->addKeyframe("wrist_r", 3.6f, glm::vec3(0.0f, 0.0f, 0.0f));
+
+
+	// Pierna izquierda: sostiene el cuerpo y despues queda detras
+	addLegPose(animation, "l", 3.6f, -41.3f, -8.3f, 0.0f, 12.0f, 29.0f, -4.0f, 7.2f);
+	addLegPose(animation, "l", 3.66f, -46.5f, -8.6f, 0.0f, 28.9f, 17.4f, -2.6f, 8.2f);
+	addLegPose(animation, "l", 3.725f, -48.4f, -9.0f, 0.0f, 39.2f, 9.1f, -1.4f, 8.9f);
+	addLegPose(animation, "l", 3.85f, -48.8f, -9.7f, 0.0f, 52.4f, -3.6f, 0.6f, 9.7f);
+	addLegPose(animation, "l", 3.925f, -47.7f, -10.2f, 0.0f, 58.0f, -10.1f, 1.8f, 10.0f);
+	addLegPose(animation, "l", 4.0f, -45.9f, -10.6f, 0.0f, 62.4f, -16.2f, 3.0f, 10.2f);
+	addLegPose(animation, "l", 4.15f, -45.4f, -10.7f, 0.0f, 65.9f, -20.2f, 3.7f, 10.0f);
+	addLegPose(animation, "l", 4.25f, -47.3f, -11.5f, 0.0f, 85.6f, -17.7f, 7.1f, 9.1f);
+	addLegPose(animation, "l", 4.6f, -8.7f, -11.4f, 0.0f, 78.5f, -49.4f, 10.7f, 4.0f);
+	addLegPose(animation, "l", 5.0f, 14.2f, -8.5f, 0.0f, 20.4f, -11.3f, 4.8f, 7.0f);
+
+	// Pierna derecha: avanza, recibe el peso y recupera la extension
+	addLegPose(animation, "r", 3.6f, 13.2f, -32.1f, 60.0f, 36.1f, -9.6f, 23.7f, 22.2f);
+	addLegPose(animation, "r", 3.85f, -1.0f, -15.1f, 30.0f, 90.0f, -64.0f, 15.1f, 0.3f);
+	addLegPose(animation, "r", 4.0f, -35.3f, 14.0f, 0.0f, 106.6f, -60.8f, -13.3f, -4.6f);
+	addLegPose(animation, "r", 4.15f, -45.8f, 12.0f, 0.0f, 67.6f, -21.4f, -4.4f, -11.2f);
+	addLegPose(animation, "r", 4.25f, -44.2f, 11.9f, 0.0f, 67.6f, -22.9f, -4.7f, -11.0f);
+	addLegPose(animation, "r", 4.425f, -37.1f, 11.3f, 0.0f, 54.8f, -17.4f, -3.4f, -10.8f);
+	addLegPose(animation, "r", 4.5125f, -33.0f, 11.0f, 0.0f, 47.2f, -13.9f, -2.7f, -10.7f);
+	addLegPose(animation, "r", 4.6f, -28.3f, 10.7f, 0.0f, 38.0f, -9.5f, -1.8f, -10.6f);
+	addLegPose(animation, "r", 5.0f, -21.6f, 10.7f, 0.0f, 23.6f, -2.0f, -0.4f, -10.7f);
+
+	// Conservamos estas poses hasta terminar el empuje
+	animation->addKeyframe("neck", 3.6f, glm::vec3(0.0f, 0.0f, 0.0f));
+	animation->addKeyframe("shoulder_l", 3.6f, glm::vec3(80.0f, -10.0f, 0.0f));
+	animation->addKeyframe("elbow_l", 3.6f, glm::vec3(140.0f, 0.0f, 0.0f));
+	animation->addKeyframe("wrist_l", 3.6f, glm::vec3(-20.0f, 0.0f, 0.0f));
+
+	// Continuacion del gesto: tronco hacia delante y brazo descendiendo
+	animation->addKeyframe("pelvis", 3.85f, glm::vec3(-15.0f, 0.0f, 0.0f));
+	animation->addKeyframe("spine", 3.85f, glm::vec3(-15.0f, 0.0f, 0.0f));
+	animation->addKeyframe("neck", 3.85f, glm::vec3(5.0f, 0.0f, 0.0f));
+	animation->addKeyframe("shoulder_r", 3.85f, glm::vec3(-40.0f, 70.0f, -20.0f));
+	animation->addKeyframe("elbow_r", 3.85f, glm::vec3(-15.0f, 0.0f, 0.0f));
+	animation->addKeyframe("wrist_r", 3.85f, glm::vec3(-15.0f, 0.0f, 0.0f));
+
+	// Frenada durante el cambio de apoyos
+	animation->addKeyframe("pelvis", 4.25f, glm::vec3(-20.0f, 0.0f, 0.0f));
+	animation->addKeyframe("spine", 4.25f, glm::vec3(-15.0f, 0.0f, 0.0f));
+	animation->addKeyframe("shoulder_r", 4.25f, glm::vec3(30.0f, 50.0f, 0.0f));
+	animation->addKeyframe("elbow_r", 4.25f, glm::vec3(-25.0f, 0.0f, 0.0f));
+	animation->addKeyframe("wrist_r", 4.25f, glm::vec3(0.0f, 0.0f, 0.0f));
+	animation->addKeyframe("shoulder_l", 4.25f, glm::vec3(60.0f, -15.0f, 0.0f));
+	animation->addKeyframe("elbow_l", 4.25f, glm::vec3(60.0f, 0.0f, 0.0f));
+	animation->addKeyframe("wrist_l", 4.25f, glm::vec3(0.0f, 0.0f, 0.0f));
+
+	// Recuperacion del equilibrio y brazos relajados
+	animation->addKeyframe("pelvis", 5.0f, glm::vec3(-5.0f, 0.0f, 0.0f));
+	animation->addKeyframe("spine", 5.0f, glm::vec3(-5.0f, 0.0f, 0.0f));
+	animation->addKeyframe("neck", 5.0f, glm::vec3(5.0f, 0.0f, 0.0f));
+	animation->addKeyframe("shoulder_r", 5.0f, glm::vec3(80.0f, 10.0f, 0.0f));
+	animation->addKeyframe("elbow_r", 5.0f, glm::vec3(-10.0f, 0.0f, 0.0f));
+	animation->addKeyframe("wrist_r", 5.0f, glm::vec3(0.0f, 0.0f, 0.0f));
+	animation->addKeyframe("shoulder_l", 5.0f, glm::vec3(80.0f, -10.0f, 0.0f));
+	animation->addKeyframe("elbow_l", 5.0f, glm::vec3(5.0f, 0.0f, 0.0f));
+	animation->addKeyframe("wrist_l", 5.0f, glm::vec3(0.0f, 0.0f, 0.0f));
+
+
 	animation->update(0.0f);
 	animationStartTime = glfwGetTime();
 
@@ -226,7 +379,7 @@ void GEScene::update(GEGraphicsContext* gc, uint32_t index)
 	glm::mat4 view = camera->getViewMatrix();
 
 	float time = static_cast<float>(glfwGetTime() - animationStartTime);
-	time = glm::clamp(time, 0.0f, 2.2f);
+	time = glm::clamp(time, 0.0f, 5.0f);
 
 	animation->update(time);
 
@@ -318,6 +471,85 @@ void GEScene::update(GEGraphicsContext* gc, uint32_t index)
 				+ avance * llegada;
 		}
 	}
+
+
+	// Giro y transferencia del cuerpo durante el lanzamiento
+	if (time > 2.2f)
+	{
+		float avanceGiro = glm::clamp(
+			(time - 2.2f) / 1.0f, 0.0f, 1.0f
+		);
+
+		giro = glm::radians(90.0f + 90.0f * avanceGiro);
+
+		glm::vec3 p0(0.0000f, 0.8330f, -0.9540f);
+		glm::vec3 p1(0.0457f, 0.8476f, -0.9845f);
+		glm::vec3 p2(0.0768f, 0.8581f, -1.0502f);
+		glm::vec3 p3(0.0810f, 0.8649f, -1.1428f);
+		glm::vec3 p4(0.0500f, 0.8679f, -1.2500f);
+
+		if (time <= 2.45f)
+		{
+			float avance = (time - 2.2f) / 0.25f;
+			posicion = (1.0f - avance) * p0 + avance * p1;
+		}
+		else if (time <= 2.7f)
+		{
+			float avance = (time - 2.45f) / 0.25f;
+			posicion = (1.0f - avance) * p1 + avance * p2;
+		}
+		else if (time <= 2.95f)
+		{
+			float avance = (time - 2.7f) / 0.25f;
+			posicion = (1.0f - avance) * p2 + avance * p3;
+		}
+		else
+		{
+			float avance = glm::clamp(
+				(time - 2.95f) / 0.25f, 0.0f, 1.0f
+			);
+
+			posicion = (1.0f - avance) * p3 + avance * p4;
+		}
+	}
+
+
+	// Recuperacion tras el lanzamiento
+	if (time > 3.6f)
+	{
+		giro = glm::radians(180.0f);
+
+		glm::vec3 p0(0.050f, 0.8679f, -1.250f);
+		glm::vec3 p1(0.020f, 0.8700f, -1.530f);
+		glm::vec3 p2(0.020f, 0.8600f, -1.580f);
+		glm::vec3 p3(0.025f, 0.9700f, -1.600f);
+		glm::vec3 p4(0.030f, 1.0000f, -1.600f);
+
+		if (time <= 4.0f)
+		{
+			float avance = (time - 3.6f) / 0.4f;
+			posicion = (1.0f - avance) * p0 + avance * p1;
+		}
+		else if (time <= 4.25f)
+		{
+			float avance = (time - 4.0f) / 0.25f;
+			posicion = (1.0f - avance) * p1 + avance * p2;
+		}
+		else if (time <= 4.6f)
+		{
+			float avance = (time - 4.25f) / 0.35f;
+			posicion = (1.0f - avance) * p2 + avance * p3;
+		}
+		else
+		{
+			float avance = glm::clamp(
+				(time - 4.6f) / 0.4f, 0.0f, 1.0f
+			);
+
+			posicion = (1.0f - avance) * p3 + avance * p4;
+		}
+	}
+
 
 	testSkeleton->setOffset(posicion);
 
@@ -485,3 +717,5 @@ void GEScene::fillCommandBuffers(std::vector<VkCommandBuffer> commandBuffers)
 
 	rc->endFillingCommandBuffers(commandBuffers);
 }
+
+
