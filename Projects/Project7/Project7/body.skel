@@ -1,0 +1,101 @@
+
+<skeleton name="body">
+	<offset x="0.0" y="1.0" z="0.0" />
+	<zaxis x="0.0" y="0.0" z="1.0" />
+	<yaxis x="0.0" y="1.0" z="0.0" />
+	<balljoint name="pelvis" length="0.3" >
+		<offset x="0.0" y="0.0" z="0.0" />
+		<zaxis x="0.0" y="1.0" z="0.0" />
+		<yaxis x="0.0" y="0.0" z="1.0" />
+		<balljoint name="spine" length="0.4" >
+			<offset x="0.0" y="0.0" z="0.0" />
+			<zaxis x="0.0" y="0.0" z="1.0" />
+			<yaxis x="0.0" y="1.0" z="0.0" />
+			<balljoint name="neck" length="0.35" >
+				<offset x="0.0" y="0.0" z="0.0" />
+				<zaxis x="0.0" y="0.0" z="1.0" />
+				<yaxis x="0.0" y="1.0" z="0.0" />
+			</balljoint>
+			<balljoint name="clavicle_l" length="0.25" >
+				<offset x="-0.05" y="0.0" z="-0.05" />
+				<zaxis x="-1.0" y="0.0" z="0.0" />
+				<yaxis x="0.0" y="1.0" z="0.0" />
+				<balljoint name="shoulder_l" length="0.35" >
+					<offset x="0.0" y="0.0" z="0.0" />
+					<zaxis x="0.0" y="0.0" z="1.0" />
+					<yaxis x="1.0" y="0.0" z="0.0" />
+					<balljoint name="elbow_l" length="0.30" >
+						<offset x="0.0" y="0.0" z="0.0" />
+						<zaxis x="0.0" y="0.0" z="1.0" />
+						<yaxis x="0.0" y="1.0" z="0.0" />
+						<balljoint name="wrist_l" length="0.20" >
+							<offset x="0.0" y="0.0" z="0.0" />
+							<zaxis x="0.0" y="0.0" z="1.0" />
+							<yaxis x="0.0" y="1.0" z="0.0" />
+						</balljoint>
+					</balljoint>
+				</balljoint>
+			</balljoint>
+			<balljoint name="clavicle_r" length="0.25" >
+				<offset x="0.05" y="0.0" z="-0.05" />
+				<zaxis x="1.0" y="0.0" z="0.0" />
+				<yaxis x="0.0" y="1.0" z="0.0" />
+				<balljoint name="shoulder_r" length="0.35" >
+					<offset x="0.0" y="0.0" z="0.0" />
+					<zaxis x="0.0" y="0.0" z="1.0" />
+					<yaxis x="-1.0" y="0.0" z="0.0" />
+					<balljoint name="elbow_r" length="0.30" >
+						<offset x="0.0" y="0.0" z="0.0" />
+						<zaxis x="0.0" y="0.0" z="1.0" />
+						<yaxis x="0.0" y="1.0" z="0.0" />
+						<balljoint name="wrist_r" length="0.20" >
+							<offset x="0.0" y="0.0" z="0.0" />
+							<zaxis x="0.0" y="0.0" z="1.0" />
+							<yaxis x="0.0" y="1.0" z="0.0" />
+						</balljoint>
+					</balljoint>
+				</balljoint>
+			</balljoint>
+		</balljoint>
+	</balljoint>
+	<balljoint name="hip_l" length="0.2">
+		<offset x="0.05" y="-0.05" z="0.0" />
+		<zaxis x="1.0" y="0.0" z="0.0" />
+		<yaxis x="0.0" y="1.0" z="0.0" />
+		<balljoint name="leg_l" length="0.5">
+			<offset x="0.0" y="0.0" z="0.0" />
+			<zaxis x="0.0" y="-1.0" z="0.0" />	
+			<yaxis x="-1.0" y="0.0" z="0.0" />
+			<balljoint name="knee_l" length="0.4">
+				<offset x="0.0" y="0.0" z="0.0" />
+				<zaxis x="0.0" y="0.0" z="1.0" />	
+				<yaxis x="0.0" y="1.0" z="0.0" />
+				<balljoint name="ankle_l" length="0.25">
+					<offset x="0.0" y="0.0" z="0.0" />
+					<zaxis x="0.0" y="1.0" z="0.0" />
+					<yaxis x="0.0" y="0.0" z="-1.0" />
+				</balljoint>
+			</balljoint>
+		</balljoint>
+	</balljoint>
+	<balljoint name="hip_r" length="0.2">
+		<offset x="-0.05" y="-0.05" z="0.0" />
+		<zaxis x="-1.0" y="0.0" z="0.0" />
+		<yaxis x="0.0" y="1.0" z="0.0" />
+		<balljoint name="leg_r" length="0.5">
+			<offset x="0.0" y="0.0" z="0.0" />
+			<zaxis x="0.0" y="-1.0" z="0.0" />	
+			<yaxis x="1.0" y="0.0" z="0.0" />
+			<balljoint name="knee_r" length="0.4">
+				<offset x="0.0" y="0.0" z="0.0" />
+				<zaxis x="0.0" y="0.0" z="1.0" />	
+				<yaxis x="0.0" y="1.0" z="0.0" />
+				<balljoint name="ankle_r" length="0.25">
+					<offset x="0.0" y="0.0" z="0.0" />
+					<zaxis x="0.0" y="1.0" z="0.0" />
+					<yaxis x="0.0" y="0.0" z="-1.0" />
+				</balljoint>
+			</balljoint>
+		</balljoint>
+	</balljoint>
+</skeleton>
