@@ -93,14 +93,14 @@ void GEBalljoint::ComputeMatrix()
 
     if (parent != nullptr)
     {
-        // Articulacion hija: hereda la transformacion del padre
+        //Articulacion hija: hereda la transformacion del padre
         glm::mat4 parentEnd = glm::translate(parent->globalMatrix,glm::vec3(0.0f, 0.0f, parent->length));
 
         matrix = parentEnd * matrix;
     }
     else
     {
-        // Articulacion raiz hereda la transformacion del esqueleto
+        //Articulacion raiz hereda la transformacion del esqueleto
         matrix = rootMatrix * matrix;
     }
 
@@ -108,7 +108,7 @@ void GEBalljoint::ComputeMatrix()
     //Guardiola transformación global
     globalMatrix = matrix;
 
-    // Actualizo la posición de la esfera y del hueso
+    //Actualizo la posicion de la esfera y del hueso
     if (joint != nullptr && bone != nullptr)
     {
         joint->setLocation(globalMatrix);
@@ -153,13 +153,13 @@ void GEBalljoint::initialize(GEGraphicsContext* gc, GERenderingContext* rc)
 
     bone->setMaterial(boneMat);
 
-    // Inicializamos primero las articulaciones hijas
+    //Inicializa primero las articulaciones hijas
     for (GEBalljoint* child : children)
     {
         child->initialize(gc, rc);
     }
 
-    // Calculamos las matrices de toda la jerarquia
+    //Calcula las matrices de toda la jerarquia
     ComputeMatrix();
 
 }
@@ -173,11 +173,11 @@ void GEBalljoint::initialize(GEGraphicsContext* gc, GERenderingContext* rc)
 void GEBalljoint::update(GEGraphicsContext* gc, uint32_t index,
     glm::mat4 view, glm::mat4 projection)
 {
-    // Actualiza la esfera y el cilindro de esta articulacion
+    //Actualiza la esfera y el cilindro de esta articulacion
     joint->update(gc, index, view, projection);
     bone->update(gc, index, view, projection);
 
-    // Actualizo todas las articulaciones hijas
+    //Actualiza todas las articulaciones hijas
     for (GEBalljoint* child : children)
     {
         child->update(gc, index, view, projection);
@@ -193,7 +193,7 @@ void GEBalljoint::update(GEGraphicsContext* gc, uint32_t index,
 
 void GEBalljoint::destroy(GEGraphicsContext* gc)
 {
-    // Destruye las articulaciones hijas
+    //Destruye las articulaciones hijas
     for (GEBalljoint* child : children)
     {
         child->destroy(gc);
@@ -202,7 +202,7 @@ void GEBalljoint::destroy(GEGraphicsContext* gc)
 
     children.clear();
 
-    // Libera los recursos de esta articulacion
+    //Libera los recursos de esta articulacion
     joint->destroy(gc);
     bone->destroy(gc);
 
@@ -247,7 +247,7 @@ void GEBalljoint::setPose(float xrot, float yrot, float zrot)
 {
     glm::vec3 pose(xrot, yrot, zrot);
 
-    // Solo restringimos los angulos si hay limites definidos
+    //Solo restringimos los angulos si hay limites definidos
     if (limitsEnabled)
     {
         pose = glm::clamp(pose, minAngles, maxAngles);
@@ -291,7 +291,7 @@ void GEBalljoint::setLight(GELight l)
     joint->setLight(l);
     bone->setLight(l);
 
-    // Aplicamos la luz a las articulaciones hijas
+    //Aplicamos la luz a las articulaciones hijas
     for (GEBalljoint* child : children)
     {
         child->setLight(l);
@@ -325,6 +325,7 @@ void GEBalljoint::addChild(GEBalljoint* child)
 	//asigna el padre y añade a la lista de hijos
     child->parent = this;
     children.push_back(child);
+    child->ComputeMatrix();
 }
 
 
@@ -353,11 +354,11 @@ void GEBalljoint::setRootMatrix(glm::mat4 matrix)
 //
 void GEBalljoint::setMaterial(GEMaterial m)
 {
-    // Asigna el material a la esfera y al cilindro
+    //Asigna el material a la esfera y al cilindro
     joint->setMaterial(m);
     bone->setMaterial(m);
 
-    // Aplica el material a las articulaciones hijas
+    //Aplica el material a las articulaciones hijas
     for (GEBalljoint* child : children)
     {
         child->setMaterial(m);
@@ -385,9 +386,75 @@ const std::string& GEBalljoint::getName() const
     return name;
 }
 
+// Consulta de la geometria, la pose y la jerarquia de la articulacion.
+float GEBalljoint::getLength() const
+{
+    return length;
+}
+
+glm::vec3 GEBalljoint::getLocation() const
+{
+    return location;
+}
+
+glm::vec3 GEBalljoint::getDirection() const
+{
+    return dir;
+}
+
+glm::vec3 GEBalljoint::getUp() const
+{
+    return up;
+}
+
+glm::vec3 GEBalljoint::getRight() const
+{
+    return right;
+}
+
+glm::vec3 GEBalljoint::getPose() const
+{
+    return glm::vec3(angles[0], angles[1], angles[2]);
+}
+
+glm::vec3 GEBalljoint::getMinAngles() const
+{
+    return minAngles;
+}
+
+glm::vec3 GEBalljoint::getMaxAngles() const
+{
+    return maxAngles;
+}
+
+bool GEBalljoint::hasLimits() const
+{
+    return limitsEnabled;
+}
+
+GEBalljoint* GEBalljoint::getParent() const
+{
+    return parent;
+}
+
+size_t GEBalljoint::getChildCount() const
+{
+    return children.size();
+}
+
+GEBalljoint* GEBalljoint::getChild(size_t index) const
+{
+    if (index >= children.size())
+    {
+        return nullptr;
+    }
+    return children[index];
+}
+
 
 void GEBalljoint::setLimits(glm::vec3 minimum, glm::vec3 maximum)
 {
+
     minAngles = minimum;
     maxAngles = maximum;
     limitsEnabled = true;

@@ -5,7 +5,7 @@
 //
 // FUNCIÓN: GESkeleton::GESkeleton()
 //
-//Construye el esqueleto.
+// PROPÓSITO: Construye el esqueleto.
 //
 GESkeleton::GESkeleton(const std::string& skeletonName)
 {
@@ -53,6 +53,25 @@ glm::vec3 GESkeleton::getUp() const
     return up;
 }
 
+glm::vec3 GESkeleton::getRight() const
+{
+    return right;
+}
+
+size_t GESkeleton::getRootJointCount() const
+{
+    return rootJoints.size();
+}
+
+GEBalljoint* GESkeleton::getRootJoint(size_t index) const
+{
+    if (index >= rootJoints.size())
+    {
+        return nullptr;
+    }
+    return rootJoints[index];
+}
+
 //
 // FUNCIÓN: GESkeleton::setOffset()
 //
@@ -85,6 +104,19 @@ void GESkeleton::setOrientation(glm::vec3 newDir, glm::vec3 newUp)
 //
 void GESkeleton::addRootJoint(GEBalljoint* joint)
 {
+    if (joint == nullptr || joint->getParent() != nullptr)
+    {
+        return;
+    }
+
+    for (GEBalljoint* root : rootJoints)
+    {
+        if (root == joint)
+        {
+            return;
+        }
+    }
+
     if (joint != nullptr)
     {
         rootJoints.push_back(joint);
@@ -113,8 +145,7 @@ void GESkeleton::initialize(GEGraphicsContext* gc, GERenderingContext* rc)
 //
 // PROPÓSITO: Actualiza las variables uniformes del esqueleto.
 //
-void GESkeleton::update(GEGraphicsContext* gc, uint32_t index,
-    glm::mat4 view, glm::mat4 projection)
+void GESkeleton::update(GEGraphicsContext* gc, uint32_t index,glm::mat4 view, glm::mat4 projection)
 {
     for (GEBalljoint* joint : rootJoints)
     {
@@ -129,8 +160,7 @@ void GESkeleton::update(GEGraphicsContext* gc, uint32_t index,
 //
 // PROPÓSITO: Añade los comandos de dibujo del esqueleto.
 //
-void GESkeleton::addCommands(VkCommandBuffer commandBuffer,
-    VkPipelineLayout pipelineLayout, int index)
+void GESkeleton::addCommands(VkCommandBuffer commandBuffer,VkPipelineLayout pipelineLayout, int index)
 {
     for (GEBalljoint* joint : rootJoints)
     {
@@ -161,38 +191,37 @@ void GESkeleton::destroy(GEGraphicsContext* gc)
 //
 // FUNCIÓN: GESkeleton::ComputeMatrix()
 //
-// PROPÓSITO: Calcula la matriz de transformacion de la raiz
-//            y la transmite a sus articulaciones.
-//
+// PROPÓSITO: Calcula la matriz de transformacion de la raiz y la transmite a sus articulaciones.
+//           
 void GESkeleton::ComputeMatrix()
 {
-    // Matriz de posicion y orientacion del esqueleto
+    //Matriz de posicion y orientacion del esqueleto
     glm::mat4 skeletonm(1.0f);
 
-    // Eje X
+    //Eje X
     skeletonm[0][0] = right.x;
     skeletonm[0][1] = right.y;
     skeletonm[0][2] = right.z;
 
-    // Eje Y
+    //Eje Y
     skeletonm[1][0] = up.x;
     skeletonm[1][1] = up.y;
     skeletonm[1][2] = up.z;
 
-    // Eje Z
+    //Eje Z
     skeletonm[2][0] = dir.x;
     skeletonm[2][1] = dir.y;
     skeletonm[2][2] = dir.z;
 
-    // Posicion de la raiz
+    //Posicion de la raiz
     skeletonm[3][0] = offset.x;
     skeletonm[3][1] = offset.y;
     skeletonm[3][2] = offset.z;
 
-    // Transformacion global del esqueleto
+    //Transformacion global del esqueleto
     glm::mat4 matrix = location * skeletonm;
 
-    // Transmitimos la matriz a las articulaciones raiz
+    //Transmite la matriz a las articulaciones raiz
     for (GEBalljoint* joint : rootJoints)
     {
         joint->setRootMatrix(matrix);
@@ -280,147 +309,99 @@ void GESkeleton::setMaterial(GEMaterial m)
 //
 // FUNCION: GESkeleton::buildBody()
 //
-// PROPOSITO: Construye manualmente el esqueleto humano
-//            descrito en body.skel.
-//
+// PROPOSITO: Construye manualmente el esqueleto humano descrito en body.skel.
+//            
 void GESkeleton::buildBody()
 {
-	// Posicion y orientacion indicadas en body.skel
+	//Posicion y orientacion indicadas en body.skel
 	setOffset(glm::vec3(0.0f, 1.0f, 0.0f));
 	setOrientation(glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-	// ARTICULACION: pelvis
+	//pelvis
 	GEBalljoint* bodyRoot = new GEBalljoint(0.3f);
 	bodyRoot->setName("pelvis");
 	bodyRoot->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-	bodyRoot->setOrientation(
-		glm::vec3(0.0f, 1.0f, 0.0f),
-		glm::vec3(0.0f, 0.0f, 1.0f)
-	);
+	bodyRoot->setOrientation(glm::vec3(0.0f, 1.0f, 0.0f),glm::vec3(0.0f, 0.0f, 1.0f));
 
-	// ARTICULACION: spine
+	//spine
 	GEBalljoint* spine = new GEBalljoint(0.4f);
 	spine->setName("spine");
 	spine->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-	spine->setOrientation(
-		glm::vec3(0.0f, 0.0f, 1.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
+	spine->setOrientation(glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-	// ARTICULACION: neck
+	//neck
 	GEBalljoint* neck = new GEBalljoint(0.35f);
 	neck->setName("neck");
 	neck->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-	neck->setOrientation(
-		glm::vec3(0.0f, 0.0f, 1.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
+	neck->setOrientation(glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-	// Construimos la jerarquia
+	//Construimos la jerarquia
 	bodyRoot->addChild(spine);
 	spine->addChild(neck);
 
 
-	//
-	// ARTICULACION: clavicle_l
-	//
+	//clavicle_l
 	GEBalljoint* clavicleL = new GEBalljoint(0.25f);
 	clavicleL->setName("clavicle_l");
 	clavicleL->setLocation(glm::vec3(-0.05f, 0.0f, -0.05f));
-	clavicleL->setOrientation(
-		glm::vec3(-1.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
+	clavicleL->setOrientation(glm::vec3(-1.0f, 0.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-	//
-	// ARTICULACION: clavicle_r
-	//
+
+	//clavicle_r
 	GEBalljoint* clavicleR = new GEBalljoint(0.25f);
 	clavicleR->setName("clavicle_r");
 	clavicleR->setLocation(glm::vec3(0.05f, 0.0f, -0.05f));
-	clavicleR->setOrientation(
-		glm::vec3(1.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
+	clavicleR->setOrientation(glm::vec3(1.0f, 0.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-	// Conectamos las claviculas a la columna
+	//Conecta las claviculas a la columna
 	spine->addChild(clavicleL);
 	spine->addChild(clavicleR);
 
 
-	//
-	// ARTICULACION: shoulder_l
-	//
+	//shoulder_l
 	GEBalljoint* shoulderL = new GEBalljoint(0.35f);
 	shoulderL->setName("shoulder_l");
 	shoulderL->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-	shoulderL->setOrientation(
-		glm::vec3(0.0f, 0.0f, 1.0f),
-		glm::vec3(1.0f, 0.0f, 0.0f)
-	);
+	shoulderL->setOrientation(glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(1.0f, 0.0f, 0.0f));
 
-	//
-	// ARTICULACION: shoulder_r
-	//
+	//shoulder_r
 	GEBalljoint* shoulderR = new GEBalljoint(0.35f);
 	shoulderR->setName("shoulder_r");
 	shoulderR->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-	shoulderR->setOrientation(
-		glm::vec3(0.0f, 0.0f, 1.0f),
-		glm::vec3(-1.0f, 0.0f, 0.0f)
-	);
+	shoulderR->setOrientation(glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(-1.0f, 0.0f, 0.0f));
 
-	// Conectamos cada hombro a su clavicula
+	//Conecta cada hombro a su clavicula
 	clavicleL->addChild(shoulderL);
 	clavicleR->addChild(shoulderR);
 
 
-
-	//
-	// ARTICULACION: elbow_l
-	//
+	//elbow_l
 	GEBalljoint* elbowL = new GEBalljoint(0.30f);
 	elbowL->setName("elbow_l");
 	elbowL->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-	elbowL->setOrientation(
-		glm::vec3(0.0f, 0.0f, 1.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
+	elbowL->setOrientation(glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-	//
-	// ARTICULACION: wrist_l
-	//
+	//wrist_l
 	GEBalljoint* wristL = new GEBalljoint(0.20f);
 	wristL->setName("wrist_l");
 	wristL->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-	wristL->setOrientation(
-		glm::vec3(0.0f, 0.0f, 1.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
+	wristL->setOrientation(glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-	//
-	// ARTICULACION: elbow_r
-	//
+
+	//elbow_r
 	GEBalljoint* elbowR = new GEBalljoint(0.30f);
 	elbowR->setName("elbow_r");
 	elbowR->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-	elbowR->setOrientation(
-		glm::vec3(0.0f, 0.0f, 1.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
+	elbowR->setOrientation(glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-	//
-	// ARTICULACION: wrist_r
-	//
+
+	//wrist_r
 	GEBalljoint* wristR = new GEBalljoint(0.20f);
 	wristR->setName("wrist_r");
 	wristR->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-	wristR->setOrientation(
-		glm::vec3(0.0f, 0.0f, 1.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
+	wristR->setOrientation(glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-	// Construimos las relaciones padre-hijo
+	//Construye las relaciones padre-hijo
 	shoulderL->addChild(elbowL);
 	elbowL->addChild(wristL);
 
@@ -428,103 +409,71 @@ void GESkeleton::buildBody()
 	elbowR->addChild(wristR);
 
 
-    // Añadimos la pelvis a la raiz del esqueleto
+    //Añade la pelvis a la raiz del esqueleto
     addRootJoint(bodyRoot);
 
-    //
-    // PIERNA IZQUIERDA
-    //
 
-    // ARTICULACION: hip_l
+    //hip_l
     GEBalljoint* hipL = new GEBalljoint(0.2f);
     hipL->setName("hip_l");
     hipL->setLocation(glm::vec3(0.05f, -0.05f, 0.0f));
-    hipL->setOrientation(
-        glm::vec3(1.0f, 0.0f, 0.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f)
-    );
+    hipL->setOrientation(glm::vec3(1.0f, 0.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-    // ARTICULACION: leg_l
+    //leg_l
     GEBalljoint* legL = new GEBalljoint(0.5f);
     legL->setName("leg_l");
     legL->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-    legL->setOrientation(
-        glm::vec3(0.0f, -1.0f, 0.0f),
-        glm::vec3(-1.0f, 0.0f, 0.0f)
-    );
+    legL->setOrientation(glm::vec3(0.0f, -1.0f, 0.0f),glm::vec3(-1.0f, 0.0f, 0.0f));
 
-    // ARTICULACION: knee_l
+    //knee_l
     GEBalljoint* kneeL = new GEBalljoint(0.4f);
     kneeL->setName("knee_l");
     kneeL->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-    kneeL->setOrientation(
-        glm::vec3(0.0f, 0.0f, 1.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f)
-    );
+    kneeL->setOrientation(glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-    // ARTICULACION: ankle_l
+    //ankle_l
     GEBalljoint* ankleL = new GEBalljoint(0.25f);
     ankleL->setName("ankle_l");
     ankleL->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-    ankleL->setOrientation(
-        glm::vec3(0.0f, 1.0f, 0.0f),
-        glm::vec3(0.0f, 0.0f, -1.0f)
-    );
+    ankleL->setOrientation(glm::vec3(0.0f, 1.0f, 0.0f),glm::vec3(0.0f, 0.0f, -1.0f));
 
-    // Construimos la jerarquia izquierda
+    //Construye la jerarquia izquierda
     hipL->addChild(legL);
     legL->addChild(kneeL);
     kneeL->addChild(ankleL);
 
-    // La cadera izquierda depende de la raiz
     addRootJoint(hipL);
 
-    //
-    // PIERNA DERECHA
-    //
 
-    // ARTICULACION: hip_r
+    //hip_r
     GEBalljoint* hipR = new GEBalljoint(0.2f);
     hipR->setName("hip_r");
     hipR->setLocation(glm::vec3(-0.05f, -0.05f, 0.0f));
-    hipR->setOrientation(
-        glm::vec3(-1.0f, 0.0f, 0.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f)
-    );
+    hipR->setOrientation(glm::vec3(-1.0f, 0.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-    // ARTICULACION: leg_r
+    //leg_r
     GEBalljoint* legR = new GEBalljoint(0.5f);
     legR->setName("leg_r");
     legR->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-    legR->setOrientation(
-        glm::vec3(0.0f, -1.0f, 0.0f),
-        glm::vec3(1.0f, 0.0f, 0.0f)
-    );
+    legR->setOrientation(glm::vec3(0.0f, -1.0f, 0.0f),glm::vec3(1.0f, 0.0f, 0.0f));
 
-    // ARTICULACION: knee_r
+    //knee_r
     GEBalljoint* kneeR = new GEBalljoint(0.4f);
     kneeR->setName("knee_r");
     kneeR->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-    kneeR->setOrientation(
-        glm::vec3(0.0f, 0.0f, 1.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f)
-    );
+    kneeR->setOrientation(glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
-    // ARTICULACION: ankle_r
+    //ankle_r
     GEBalljoint* ankleR = new GEBalljoint(0.25f);
     ankleR->setName("ankle_r");
     ankleR->setLocation(glm::vec3(0.0f, 0.0f, 0.0f));
-    ankleR->setOrientation(
-        glm::vec3(0.0f, 1.0f, 0.0f),
-        glm::vec3(0.0f, 0.0f, -1.0f)
-    );
+    ankleR->setOrientation(glm::vec3(0.0f, 1.0f, 0.0f),glm::vec3(0.0f, 0.0f, -1.0f));
 
-    // Construimos la jerarquia derecha
+    //Construye la jerarquia derecha
     hipR->addChild(legR);
     legR->addChild(kneeR);
     kneeR->addChild(ankleR);
 
-    // La cadera derecha depende de la raiz
     addRootJoint(hipR);
 }
 
@@ -536,10 +485,9 @@ void GESkeleton::buildBody()
 //
 // PROPOSITO: 
 //            
-//
  GEBalljoint* GESkeleton::getJoint(const std::string& jointName)
     {
-        // Buscamos en las tres ramas principales del esqueleto
+        //Busca en las tres ramas principales del esqueleto
         for (GEBalljoint* root : rootJoints)
         {
             GEBalljoint* found = root->findJoint(jointName);
@@ -550,6 +498,6 @@ void GESkeleton::buildBody()
             }
         }
 
-        // No existe una articulacion con ese nombre
+        //No existe una articulacion con ese nombre
         return nullptr;
     }
