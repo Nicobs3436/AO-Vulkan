@@ -1,8 +1,5 @@
 #pragma once
 
-
-#pragma once
-
 #include "GEGraphicsContext.h"
 #include "GERenderingContext.h"
 #include "GEBalljoint.h"
@@ -34,15 +31,13 @@ public:
     GESkeleton(const std::string& skeletonName);
 
     
-    void buildBody();// Construye el esqueleto humano de body.skel
+    void buildBody();//Construye el esqueleto humano de body.skel
     GEBalljoint* getJoint(const std::string& jointName);
 
     void initialize(GEGraphicsContext* gc, GERenderingContext* rc);
     void destroy(GEGraphicsContext* gc);
-    void addCommands(VkCommandBuffer commandBuffer,
-        VkPipelineLayout pipelineLayout, int index);
-    void update(GEGraphicsContext* gc, uint32_t index,
-        glm::mat4 view, glm::mat4 projection);
+    void addCommands(VkCommandBuffer commandBuffer,VkPipelineLayout pipelineLayout, int index);
+    void update(GEGraphicsContext* gc, uint32_t index,glm::mat4 view, glm::mat4 projection);
 
     void resetLocation();
     void setLocation(glm::mat4 m);
@@ -56,8 +51,12 @@ public:
     glm::vec3 getOffset() const;
     glm::vec3 getDirection() const;
     glm::vec3 getUp() const;
+    glm::vec3 getRight() const;
+    size_t getRootJointCount() const;
+    GEBalljoint* getRootJoint(size_t index) const;
 
     void setOffset(glm::vec3 newOffset);
     void setOrientation(glm::vec3 newDir, glm::vec3 newUp);
     void addRootJoint(GEBalljoint* joint);
 };
+

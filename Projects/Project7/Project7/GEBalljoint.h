@@ -49,9 +49,21 @@ public:
 	GEBalljoint(float length);
 	void setName(const std::string& newName);
 	const std::string& getName() const;
+	float getLength() const;
+	glm::vec3 getLocation() const;
+	glm::vec3 getDirection() const;
+	glm::vec3 getUp() const;
+	glm::vec3 getRight() const;
+	glm::vec3 getPose() const;
+	glm::vec3 getMinAngles() const;
+	glm::vec3 getMaxAngles() const;
+	bool hasLimits() const;
+	GEBalljoint* getParent() const;
+	size_t getChildCount() const;
+	GEBalljoint* getChild(size_t index) const;
 	GEBalljoint* findJoint(const std::string& jointName);
-	void initialize(GEGraphicsContext* gc, GERenderingContext* rc);//inicializa los recurso graficos de la articulación
-	void destroy(GEGraphicsContext* gc);//libera los recursos graficos de la articulación
+	void initialize(GEGraphicsContext* gc, GERenderingContext* rc);//inicializa los recurso graficos de la articulacion
+	void destroy(GEGraphicsContext* gc);//libera los recursos graficos de la articulacion
 	void addCommands(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, int index);//añade ordenes de renderizado
 	void update(GEGraphicsContext* gc, uint32_t index, glm::mat4 view, glm::mat4 projection);//actualiza los datos para dibujar
 
