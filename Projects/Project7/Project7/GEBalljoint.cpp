@@ -37,7 +37,7 @@ GEBalljoint::GEBalljoint(float l)
 //
 void GEBalljoint::ComputeMatrix()
 {
-    // Formato glm::mat4[column][row]
+    //Formato glm::mat4[column][row]
     glm::mat4 jointm;
     jointm[0][0] = right.x;
     jointm[0][1] = right.y;
@@ -118,7 +118,7 @@ void GEBalljoint::ComputeMatrix()
         bone->setLocation(mm);
     }
 
-    // Actualizo las articulaciones hijas recursivamente
+    //Actualiza las articulaciones hijas recursivamente
     for (GEBalljoint* child : children)
     {
         child->ComputeMatrix();
@@ -169,7 +169,6 @@ void GEBalljoint::initialize(GEGraphicsContext* gc, GERenderingContext* rc)
 //
 // PROPÓSITO: Actualiza las variables uniformes
 //
-
 void GEBalljoint::update(GEGraphicsContext* gc, uint32_t index,
     glm::mat4 view, glm::mat4 projection)
 {
@@ -190,7 +189,6 @@ void GEBalljoint::update(GEGraphicsContext* gc, uint32_t index,
 //
 // PROPÓSITO: Destruye los buffers de las piezas
 //
-
 void GEBalljoint::destroy(GEGraphicsContext* gc)
 {
     //Destruye las articulaciones hijas
@@ -285,7 +283,6 @@ void GEBalljoint::addCommands(VkCommandBuffer commandBuffer,
 //
 // PROPÓSITO: Asigna las propiedades de la luz
 //
-
 void GEBalljoint::setLight(GELight l)
 {
     joint->setLight(l);
@@ -349,9 +346,8 @@ void GEBalljoint::setRootMatrix(glm::mat4 matrix)
 //
 // FUNCION: GEBalljoint::setMaterial()
 //
-// PROPOSITO: Asigna un material a las piezas de la
-//            articulacion y a sus articulaciones hijas.
-//
+// PROPOSITO: Asigna un material a las piezas de la articulacion y a sus articulaciones hijas
+//           .
 void GEBalljoint::setMaterial(GEMaterial m)
 {
     //Asigna el material a la esfera y al cilindro
@@ -386,7 +382,7 @@ const std::string& GEBalljoint::getName() const
     return name;
 }
 
-// Consulta de la geometria, la pose y la jerarquia de la articulacion.
+//Consulta de la geometria, la pose y la jerarquia de la articulacion.
 float GEBalljoint::getLength() const
 {
     return length;

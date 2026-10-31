@@ -370,7 +370,6 @@ void GEScene::recreate(GEGraphicsContext* gc, GEDrawingContext* dc, GECommandCon
 //
 // PROPÓSITO: Actualiza la información para generar la imagen 
 //
-
 void GEScene::update(GEGraphicsContext* gc, uint32_t index)
 {
 	camera->update();

@@ -1,11 +1,22 @@
-
 #include "GEAnimation.h"
 
+
+//
+// FUNCIÓN: GEAnimation::GEAnimation()
+//
+// PROPÓSITO: Asocia la animacion al esqueleto recibido.
+//
 GEAnimation::GEAnimation(GESkeleton* skeleton)
 {
     this->skeleton = skeleton;
 }
 
+
+//
+// FUNCIÓN: GEAnimation::addKeyframe()
+//
+// PROPÓSITO: Añade un fotograma en orden temporal o sustituye el del mismo instante.
+//
 void GEAnimation::addKeyframe(
     const std::string& jointName,
     float time,
@@ -47,6 +58,12 @@ void GEAnimation::addKeyframe(
     tracks.push_back(track);
 }
 
+
+//
+// FUNCIÓN: GEAnimation::update()
+//
+// PROPÓSITO: Calcula la pose interpolada y conserva las poses extremas fuera de su intervalo.
+//
 void GEAnimation::update(float time)
 {
     if (skeleton == nullptr)
@@ -54,7 +71,7 @@ void GEAnimation::update(float time)
         return;
     }
 
-    // Calculamos la pose de cada articulacion animada
+    //Calcula la pose de cada articulacion animada
     for (JointTrack& track : tracks)
     {
         GEBalljoint* joint = skeleton->getJoint(track.jointName);
@@ -64,11 +81,10 @@ void GEAnimation::update(float time)
             continue;
         }
 
-        // Por defecto, utilizamos el primer fotograma
+        //Por defecto, utiliza el primer fotograma
         glm::vec3 angles = track.keyframes.front().angles;
 
-        // Buscamos los dos fotogramas entre los que
-        // se encuentra el instante actual
+        //Busca los dos fotogramas entre los que se encuentra el instante actual
         for (size_t i = 1; i < track.keyframes.size(); i++)
         {
             const Keyframe& previous = track.keyframes[i - 1];
@@ -76,25 +92,24 @@ void GEAnimation::update(float time)
 
             if (time <= next.time)
             {
-                // Proporcion de tiempo entre ambos fotogramas
+                //Proporcion de tiempo entre ambos fotogramas
                 float t = (time - previous.time) /
                     (next.time - previous.time);
 
                 t = glm::clamp(t, 0.0f, 1.0f);
 
-                // Interpolacion lineal de los angulos
+                //Interpolacion lineal de los angulos
                 angles = (1.0f - t) * previous.angles
                     + t * next.angles;
 
                 break;
             }
 
-            // Si hemos superado este fotograma,
-            // conservamos su pose
+            //Si hemos superado este fotograma, conservamos su pose
             angles = next.angles;
         }
 
-        // Aplicamos la pose calculada
+        //Aplicamos la pose calculada
         joint->setPose(angles.x, angles.y, angles.z);
     }
 }

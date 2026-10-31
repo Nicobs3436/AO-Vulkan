@@ -9,24 +9,24 @@
 class GEAnimation
 {
 private:
-    // Fotograma clave de una articulacion
+    //Fotograma clave de una articulacion
     struct Keyframe
     {
         float time;
         glm::vec3 angles;
     };
 
-    // Secuencia de fotogramas clave de una articulacion
+    //Secuencia de fotogramas clave de una articulacion
     struct JointTrack
     {
         std::string jointName;
         std::vector<Keyframe> keyframes;
     };
 
-    // Esqueleto que vamos a animar
+    //Esqueleto que vamos a animar
     GESkeleton* skeleton;
 
-    // Datos de animacion de las articulaciones
+    //Datos de animacion de las articulaciones
     std::vector<JointTrack> tracks;
 
 public:
