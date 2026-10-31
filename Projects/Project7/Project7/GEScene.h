@@ -23,16 +23,11 @@ class GEScene
 private:
 	GERenderingContext* rc;
 	GEFigure* ground;
-	GEFigure* column;
-	GEFigure* cross;
-	GEBalljoint* armL;
-	GEBalljoint* armR;
-	GESkeleton* testSkeleton = nullptr;// Esqueleto temporal para comprobar la jerarquia
+	GESkeleton* testSkeleton = nullptr;//Esqueleto de la escena
 	GEAnimation* animation = nullptr;
 
-	// Instante en el que comienza la animacion
+	//Instante en el que comienza la animacion
 	double animationStartTime = 0.0;
-	float angle;
 	GECamera* camera;
 	glm::mat4 projection;
 
